@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1a5c8c">
+<title>人大会计学·财务管理 期末题库</title>
+<style>
+:root {
+  --bg: #f4f2ee; --card: #ffffff; --ink: #24292f; --muted: #6a737d;
+  --accent: #1a5c8c; --accent-soft: #e8f1f8; --line: #e4e0da;
+  --ok: #1a7f37; --ok-bg: #e6f4ea; --no: #c0392b; --no-bg: #fdecea;
+  --blue: #1a5c8c; --green: #1a7f37; --purple: #6f42c1;
+}
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
+  font-size: 16px; line-height: 1.7;
+}
+button { font-family: inherit; cursor: pointer; }
+a { color: var(--accent); }
+
+/* ===== 顶栏 ===== */
+.topbar {
+  position: sticky; top: 0; z-index: 50; display: flex; align-items: center; gap: 8px;
+  background: var(--card); border-bottom: 1px solid var(--line);
+  padding: 8px 12px; padding-top: calc(8px + env(safe-area-inset-top));
+}
+.topbar .logo { font-size: 15px; font-weight: 700; color: var(--accent); white-space: nowrap; }
+.topbar .stats { flex: 1; text-align: center; font-size: 12.5px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.icon-btn {
+  border: 1px solid var(--line); background: var(--card); color: var(--ink);
+  border-radius: 8px; padding: 7px 10px; font-size: 14px;
+}
+.chip {
+  border: 1px solid var(--line); background: var(--card); color: var(--ink);
+  border-radius: 999px; padding: 5px 12px; font-size: 12.5px;
+}
+.chip.on { background: #fff3cd; border-color: #e6c65c; color: #7a5b00; }
+
+/* ===== 布局 ===== */
+.layout { display: flex; max-width: 1100px; margin: 0 auto; }
+main { flex: 1; min-width: 0; padding: 16px 16px 90px; }
+#questionArea { max-width: 760px; margin: 0 auto; }
+
+/* ===== 抽屉 ===== */
+.drawer {
+  width: 300px; flex-shrink: 0; background: var(--card);
+  border-right: 1px solid var(--line); padding: 14px 16px;
+  height: calc(100vh - 52px); overflow-y: auto; position: sticky; top: 52px;
+}
+.drawer h3 { font-size: 12px; color: var(--muted); letter-spacing: .08em; margin: 14px 0 6px; }
+.mode-seg { display: flex; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+.mode-seg button { flex: 1; border: none; background: var(--card); padding: 9px 0; font-size: 14px; color: var(--ink); }
+.mode-seg button.on { background: var(--accent); color: #fff; font-weight: 600; }
+.subject-tabs { display: flex; gap: 8px; margin-top: 10px; }
+.subject-tab { flex: 1; border: 1px solid var(--line); background: var(--card); border-radius: 10px; padding: 8px 0; font-size: 14px; }
+.subject-tab.on { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+#chapterSel {
+  width: 100%; margin-top: 10px; padding: 9px 10px; font-size: 14px;
+  border: 1px solid var(--line); border-radius: 10px; background: var(--card); color: var(--ink);
+}
+.subj-group { font-size: 12px; font-weight: 700; color: var(--muted); margin: 12px 0 4px; }
+.ch-row { display: flex; align-items: center; gap: 8px; padding: 5px 6px; border-radius: 8px; cursor: pointer; font-size: 13px; }
+.ch-row:hover { background: var(--accent-soft); }
+.ch-row.cur { background: var(--accent-soft); }
+.ch-name { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ch-bar { width: 64px; height: 6px; background: var(--line); border-radius: 3px; overflow: hidden; flex-shrink: 0; }
+.ch-bar i { display: block; height: 100%; background: var(--accent); border-radius: 3px; }
+.ch-num { font-size: 11px; color: var(--muted); flex-shrink: 0; }
+
+/* ===== 题目卡 ===== */
+.q-card {
+  background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+  padding: 18px; margin-bottom: 14px;
+}
+.q-head { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+.badge { color: #fff; font-size: 12px; border-radius: 6px; padding: 2px 10px; }
+.bg-blue { background: var(--blue); } .bg-green { background: var(--green); } .bg-purple { background: var(--purple); }
+.q-no { font-size: 13px; color: var(--muted); }
+.q-ch { flex: 1; font-size: 12.5px; color: var(--muted); text-align: right; }
+.fav { border: 1px solid var(--line); background: var(--card); border-radius: 999px; padding: 4px 12px; font-size: 12.5px; color: var(--ink); }
+.fav.on { background: #fff3cd; border-color: #e6c65c; color: #7a5b00; }
+.stem { font-size: 16.5px; font-weight: 600; margin-bottom: 14px; white-space: pre-wrap; }
+.options { display: flex; flex-direction: column; gap: 10px; }
+.opt {
+  display: flex; align-items: flex-start; gap: 10px; border: 1.5px solid var(--line);
+  border-radius: 12px; padding: 12px 14px; cursor: pointer; background: var(--card);
+  transition: border-color .15s, background .15s;
+}
+.opt:hover { border-color: var(--accent); }
+.opt.chosen { border-color: var(--accent); background: var(--accent-soft); }
+.opt.right { border-color: var(--ok); background: var(--ok-bg); }
+.opt.wrong { border-color: var(--no); background: var(--no-bg); }
+.opt input { display: none; }
+.opt-tag {
+  width: 26px; height: 26px; border-radius: 50%; background: var(--bg); color: var(--muted);
+  display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700;
+  flex-shrink: 0; margin-top: 2px;
+}
+.opt.chosen .opt-tag { background: var(--accent); color: #fff; }
+.opt.right .opt-tag { background: var(--ok); color: #fff; }
+.opt.wrong .opt-tag { background: var(--no); color: #fff; }
+.opt.judge .opt-tag { border-radius: 8px; }
+.essay-input {
+  width: 100%; min-height: 160px; border: 1.5px solid var(--line); border-radius: 12px;
+  padding: 12px; font-size: 15px; font-family: inherit; line-height: 1.7; resize: vertical;
+  background: var(--card); color: var(--ink);
+}
+.essay-note { font-size: 12.5px; color: var(--muted); margin-top: 8px; }
+.essay-block { border: 1px solid var(--line); border-radius: 12px; padding: 14px; background: #fbfaf8; }
+.essay-user { font-size: 14px; margin-bottom: 10px; }
+.essay-text { white-space: pre-wrap; color: var(--muted); font-size: 14.5px; }
+.ans-block { border: 1px solid #cfe3d0; background: #f2f9f3; border-radius: 12px; padding: 12px 14px; margin-top: 8px; }
+.ans-title { font-weight: 700; color: var(--ok); font-size: 13.5px; margin-bottom: 4px; }
+.ans-content { white-space: pre-wrap; font-size: 14.5px; }
+.explain { margin-top: 14px; border-top: 1px dashed var(--line); padding-top: 12px; }
+.verdict { font-weight: 700; font-size: 15px; margin-bottom: 8px; }
+.v-ok { color: var(--ok); } .v-no { color: var(--no); }
+.diagram-title { font-weight: 700; color: var(--accent); font-size: 13.5px; margin: 10px 0 6px; }
+.diagram { overflow-x: auto; background: #fbfaf8; border: 1px solid var(--line); border-radius: 10px; padding: 10px; }
+.diagram svg { max-width: 100%; height: auto; display: block; }
+
+/* ===== 底部操作条 ===== */
+.actionbar {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 40;
+  display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;
+  background: var(--card); border-top: 1px solid var(--line);
+  padding: 10px 12px; padding-bottom: calc(10px + env(safe-area-inset-bottom));
+}
+.actionbar button {
+  border: 1px solid var(--line); background: var(--card); color: var(--ink);
+  border-radius: 10px; padding: 11px 18px; font-size: 14.5px;
+}
+.actionbar button:disabled { opacity: .4; cursor: default; }
+.actionbar button.primary { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
+.actionbar button.submit { background: #b45309; border-color: #b45309; color: #fff; font-weight: 600; }
+
+.empty { text-align: center; color: var(--muted); padding: 60px 20px; font-size: 15px; }
+
+/* ===== 弹层 ===== */
+.overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 100;
+  display: none; align-items: center; justify-content: center; padding: 16px;
+}
+.overlay .panel {
+  background: var(--card); border-radius: 16px; padding: 22px; width: 100%;
+  max-width: 440px; max-height: 86vh; overflow-y: auto;
+}
+.result-card { background: var(--card); border-radius: 16px; padding: 28px; width: 100%; max-width: 420px; text-align: center; }
+.result-card h2 { margin: 0 0 10px; font-size: 20px; }
+.score { font-size: 52px; font-weight: 800; color: var(--accent); }
+.score span { font-size: 16px; color: var(--muted); margin-left: 4px; }
+.result-meta { color: var(--muted); font-size: 14px; margin: 8px 0 18px; }
+.result-btns { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+.result-btns button {
+  border: 1px solid var(--line); background: var(--card); border-radius: 10px;
+  padding: 10px 16px; font-size: 14px;
+}
+.result-btns button:first-child { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+.panel h2 { margin: 0 0 14px; font-size: 18px; }
+.panel label { display: block; font-size: 13px; color: var(--muted); margin: 12px 0 4px; }
+.panel input {
+  width: 100%; padding: 10px 12px; font-size: 14px; border: 1px solid var(--line);
+  border-radius: 10px; background: var(--card); color: var(--ink);
+}
+.panel .hint { font-size: 12px; color: var(--muted); margin-top: 6px; line-height: 1.6; }
+.panel .row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
+.panel .row button {
+  flex: 1; border: 1px solid var(--line); background: var(--card); border-radius: 10px;
+  padding: 10px 8px; font-size: 13.5px; min-width: 90px;
+}
+.panel .row button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+.panel .row button.danger { color: var(--no); border-color: #f0c4bf; }
+#syncStatus { font-size: 12.5px; color: var(--muted); margin-top: 10px; line-height: 1.6; }
+
+/* toast */
+#toast {
+  position: fixed; left: 50%; bottom: 110px; transform: translateX(-50%) translateY(20px);
+  background: rgba(30,30,30,.92); color: #fff; padding: 9px 20px; border-radius: 999px;
+  font-size: 14px; z-index: 200; opacity: 0; pointer-events: none; transition: all .2s;
+}
+#toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ===== 手机端 ===== */
+@media (max-width: 860px) {
+  .drawer {
+    position: fixed; left: 0; top: 0; bottom: 0; z-index: 110; height: 100%;
+    transform: translateX(-100%); transition: transform .25s ease;
+    padding-top: calc(16px + env(safe-area-inset-top));
+  }
+  .drawer.open { transform: translateX(0); box-shadow: 4px 0 24px rgba(0,0,0,.25); }
+  .backdrop { position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 100; display: none; }
+  .backdrop.show { display: block; }
+  main { padding: 12px 12px 100px; }
+  .q-card { padding: 14px; border-radius: 12px; }
+  .stem { font-size: 15.5px; }
+  .opt { padding: 11px 12px; }
+  .actionbar button { padding: 11px 14px; font-size: 14px; flex: 1; }
+  .logo { font-size: 14px; }
+}
+@media (min-width: 861px) {
+  .backdrop { display: none !important; }
+}
+@media print {
+  .topbar, .drawer, .actionbar, .backdrop, #toast { display: none !important; }
+  body { background: #fff; }
+  main { padding: 0; }
+}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <button class="icon-btn" id="menuBtn" aria-label="目录">☰</button>
+  <span class="logo">人大会计·财管题库</span>
+  <span class="stats" id="stats">加载中…</span>
+  <button class="chip" id="favFilterBtn">☆ 只看收藏</button>
+  <button class="icon-btn" id="setBtn" aria-label="设置">⚙</button>
+</div>
+<div class="backdrop" id="backdrop"></div>
+<div class="layout">
+  <nav class="drawer" id="drawer">
+    <h3>做题模式</h3>
+    <div class="mode-seg">
+      <button data-mode="practice" class="on">练习（即时判分）</button>
+      <button data-mode="exam">考试（交卷判分）</button>
+    </div>
+    <h3>科目</h3>
+    <div class="subject-tabs">
+      <button class="subject-tab on" data-subj="会计学">会计学</button>
+      <button class="subject-tab" data-subj="财务管理">财务管理</button>
+    </div>
+    <h3>章节范围</h3>
+    <select id="chapterSel"></select>
+    <div id="chapterList"></div>
+  </nav>
+  <main>
+    <div class="q-card" id="questionArea"><div class="empty">加载中…</div></div>
+    <div class="actionbar" id="actionbar" style="display:none"></div>
+  </main>
+</div>
+
+<div class="overlay" id="examOverlay"></div>
+
+<div class="overlay" id="settingsOverlay">
+  <div class="panel">
+    <h2>⚙ 设置与进度同步</h2>
+    <label>GitHub Token（仅存于本机浏览器，不上传）</label>
+    <input id="tokenInput" type="password" placeholder="ghp_xxxx（需要 gist 权限）">
+    <div class="hint">
+      ① 打开 <a href="https://github.com/settings/tokens/new?scopes=gist&description=ruc-quiz-sync" target="_blank">github.com/settings/tokens/new</a> 创建 token，只勾选 <b>gist</b> 权限；
+      ② 粘贴到上面。手机和电脑粘贴<b>同一个 token + 相同标识</b>即可互通进度。
+    </div>
+    <label>同步标识（多设备用同一个标识）</label>
+    <input id="syncKeyInput" placeholder="默认设备">
+    <div id="syncStatus">未配置同步：进度只保存在本机浏览器</div>
+    <div class="row">
+      <button class="primary" id="saveSettings">保存并同步</button>
+      <button id="testSync">测试同步</button>
+      <button id="pullSync">拉取进度</button>
+      <button class="danger" id="clearLocal">清空本机</button>
+      <button class="danger" id="clearAll">清空全部</button>
+      <button id="closeSettings">关闭</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script src="questions.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
